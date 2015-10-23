@@ -1,0 +1,10 @@
+[
+  {
+    "caption": "FileSwitcher: Open corresponding js/html file",
+    "command": "html_js_switcher"
+  },
+  {
+    "caption": "FileSwitcher: Open corresponding css/html file",
+    "command": "html_css_switcher"
+  }
+]

@@ -1,0 +1,12 @@
+[
+	{
+		"keys": ["ctrl+shift+period"],
+		"command": "html_js_switcher",
+		"args": {}
+	},
+  {
+    "keys": ["ctrl+shift+comma"],
+    "command": "html_css_switcher",
+    "args": {}
+  }
+]
