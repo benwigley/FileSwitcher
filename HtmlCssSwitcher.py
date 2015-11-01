@@ -24,7 +24,7 @@ class HtmlCssSwitcherCommand(sublime_plugin.WindowCommand):
         current_file_name = os.path.splitext(current_file_name)[0]
 
         is_css_file = False
-        for ext in [".css", ".sass", ".styl", ".less"]:
+        for ext in [".css", ".scss", ".sass", ".styl", ".less"]:
             if ext in current_file_path:
                 is_css_file = True
 
@@ -34,10 +34,12 @@ class HtmlCssSwitcherCommand(sublime_plugin.WindowCommand):
                 is_html_file = True
 
         if is_css_file:
-            source_matcher = re.compile(r"[/\\]" + current_file_name + "\.(haml|hbs|jsx)(\.haml|\.erb|)$")
+            print("Looking for a matching html file")
+            source_matcher = re.compile(r"[/\\]" + current_file_name + "\.(html|haml|hbs|jsx)(\.haml|\.erb|)$")
             self.open_project_file(source_matcher, current_file_path)
         elif is_html_file:
-            source_matcher = re.compile(r"[/\\]" + current_file_name + "\.(css|sass|styl|less)(\.sass|)(\.erb|)$")
+            print("Looking for a matching css file")
+            source_matcher = re.compile(r"[/\\]" + current_file_name + "\.(css|sass|scss|styl|less)(\.sass|\.scss|)(\.erb|)$")
             self.open_project_file(source_matcher, current_file_path)
         else:
             print("Error: current file is not a css or html file")
@@ -49,7 +51,7 @@ class HtmlCssSwitcherCommand(sublime_plugin.WindowCommand):
         for path, dirs, filenames in self.walk_project_folder(file_path):
 
             # Loop over each file in the directory. Filter by files with the correct extensions.
-            for filename in filter(lambda f: re.search(r"\.(html|hbs|jsx|css|sass|styl|less)(\.haml|\.erb|\.sass|)(\.erb|\.erb|)$", f), filenames):
+            for filename in filter(lambda f: re.search(r"\.(html|hbs|jsx|css|scss|sass|styl|less)(\.haml|\.erb|\.scss|\.sass|)(\.erb|\.erb|)$", f), filenames):
                 current_file = os.path.join(path, filename)
                 if file_matcher.search(current_file):
                     return self.switch_to(os.path.join(path, filename))
