@@ -33,11 +33,16 @@ class HtmlCssSwitcherCommand(sublime_plugin.WindowCommand):
             if ext in current_file_path:
                 is_html_file = True
 
+        is_js_file = False
+        for ext in [".js", ".ts"]:
+            if ext in current_file_path:
+                is_js_file = True
+
         if is_css_file:
             print("Looking for a matching html file")
-            source_matcher = re.compile(r"[/\\]" + current_file_name + "\.(html|haml|hbs|jsx)(\.haml|\.erb|)$")
+            source_matcher = re.compile(r"[/\\]" + current_file_name + "\.(component.html|html|haml|hbs|jsx)(\.haml|\.erb|)$")
             self.open_project_file(source_matcher, current_file_path)
-        elif is_html_file:
+        elif is_html_file or is_js_file:
             print("Looking for a matching css file")
             source_matcher = re.compile(r"[/\\]" + current_file_name + "\.(css|sass|scss|styl|less)(\.sass|\.scss|)(\.erb|)$")
             self.open_project_file(source_matcher, current_file_path)

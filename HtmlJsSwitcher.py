@@ -15,19 +15,26 @@ class HtmlJsSwitcherCommand(sublime_plugin.WindowCommand):
         print("Current filepath: " + current_file_path)
 
         # Get the file name (without the path)
-        current_file_name = re.search(r"[\w-]+\.", current_file_path).group(0)[:-1]
-        print("Current filename: " + current_file_name)
+        if ".component." in current_file_path:
+            # In this case we want to keep the '.component' in the filename
+            current_file_name = re.search(r"[\w-]+\.component+\.", current_file_path).group(0)[:-1]
+            print("Current filename: " + current_file_name)
+        else:
+            # Get the file name (without the path)
+            current_file_name = re.search(r"[\w-]+\.", current_file_path).group(0)[:-1]
+            print("Current filename: " + current_file_name)
 
-        # Run this twice to remove up to three file extensions from the file name.
-        current_file_name = os.path.splitext(current_file_name)[0]
-        current_file_name = os.path.splitext(current_file_name)[0]
-        current_file_name = os.path.splitext(current_file_name)[0]
+        # Run this a few times to remove up to three file extensions from the file name.
+        # current_file_name = os.path.splitext(current_file_name)[0]
+        # current_file_name = os.path.splitext(current_file_name)[0]
+        # current_file_name = os.path.splitext(current_file_name)[0]
 
-        if ".js" in current_file_path:
+        if ".js" in current_file_path or ".ts" in current_file_path:
             source_matcher = re.compile(r"[/\\]" + current_file_name + "\.html(\.haml|\.erb|)$")
+            print("[/\\]" + current_file_name + "\.html(\.haml|\.erb|)$")
             self.open_project_file(source_matcher, current_file_path)
-        elif ".html" in current_file_path:
-            source_matcher = re.compile(r"[/\\]" + current_file_name + "\.js(\.coffee|)(\.erb|)$")
+        elif ".html" in current_file_path or ".css" in current_file_path or ".styl" in current_file_path:
+            source_matcher = re.compile(r"[/\\]" + current_file_name + "\.(js|component.js|ts|component.ts)(\.coffee|)(\.erb|)$")
             self.open_project_file(source_matcher, current_file_path)
         else:
             print("Error: current file is not a js or html file")
@@ -37,9 +44,12 @@ class HtmlJsSwitcherCommand(sublime_plugin.WindowCommand):
 
         # Walk the project directory looking for files
         for path, dirs, filenames in self.walk_project_folder(file_path):
+            if "/node_modules/" in path or "/tmp/" in path:
+                continue
 
             # Loop over each file in the directory. Filter by files with the correct extensions.
-            for filename in filter(lambda f: re.search(r"\.(html|js)(\.haml|\.erb|\.coffee|)(\.erb|)$", f), filenames):
+            for filename in filter(lambda f: re.search(r"\.(html|js|ts)(\.haml|\.erb|\.coffee|)(\.erb|)$", f), filenames):
+                # print ("filename: " + filename)
                 current_file = os.path.join(path, filename)
                 if file_matcher.search(current_file):
                     return self.switch_to(os.path.join(path, filename))
